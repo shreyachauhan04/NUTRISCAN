@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriScan ✿</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf8f3;
+  --cream2: #f3f0e8;
+  --sage: #b8cbb0;
+  --sage-light: #ddebd7;
+  --sage-dark: #7a9e70;
+  --sage-deep: #4a7a40;
+  --mint: #e8f5e3;
+  --mint2: #d4edcc;
+  --leaf: #c8dfc0;
+  --text: #2d3b28;
+  --text2: #4a5e44;
+  --muted: #8a9e84;
+  --muted2: #b5c4b0;
+  --border: rgba(120,160,110,0.18);
+  --border2: rgba(120,160,110,0.3);
+  --white: #ffffff;
+  --peach: #f5e6d8;
+  --blush: #f0d8cc;
+  --lemon: #f5f0d0;
+  --sky: #daeef5;
+
+  --grade-a-bg: #d8f0d0; --grade-a-text: #2d6b22; --grade-a-border: #a8d89e;
+  --grade-b-bg: #e5f2d0; --grade-b-text: #4a7020; --grade-b-border: #c2dc98;
+  --grade-c-bg: #f5f0d0; --grade-c-text: #7a6010; --grade-c-border: #e0d098;
+  --grade-d-bg: #f5e6d8; --grade-d-text: #8a4010; --grade-d-border: #e0b898;
+  --grade-e-bg: #f0d8cc; --grade-e-text: #8a2810; --grade-e-border: #d8a090;
+  --grade-f-bg: #f0cccc; --grade-f-text: #7a1818; --grade-f-border: #d09090;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* background blobs */
+body::before {
+  content: '';
+  position: fixed;
+  top: -120px; left: -120px;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,203,176,0.35) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -80px; right: -80px;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,237,204,0.4) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding-bottom: 60px;
+}
+
+/* HEADER */
+.header {
+  padding: 36px 24px 0;
+  text-align: center;
+  animation: fadeDown .6s ease both;
+}
+.logo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sage-deep);
+  color: var(--cream);
+  padding: 6px 16px 6px 10px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+.logo-dot {
+  width: 22px; height: 22px;
+  background: var(--mint);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.hero-title span { color: var(--sage-deep); }
+.hero-sub {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* SEARCH */
+.search-section {
+  padding: 22px 20px 0;
+  animation: fadeDown .6s .1s ease both;
+}
+.search-wrap {
+  background: var(--white);
+  border: 1.5px solid var(--border2);
+  border-radius: 20px;
+  padding: 5px 5px 5px 18px;
+  display: flex;
+  gap: 8px;
+  box-shadow: 0 4px 24px rgba(100,140,90,0.1);
+  transition: border-color .25s, box-shadow .25s;
+}
+.search-wrap:focus-within {
+  border-color: var(--sage-dark);
+  box-shadow: 0 4px 32px rgba(100,140,90,0.18);
+}
+.search-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  padding: 9px 0;
+}
+.search-wrap input::placeholder { color: var(--muted2); }
+.scan-btn {
+  background: var(--sage-deep);
+  color: var(--cream);
+  border: none;
+  border-radius: 14px;
+  padding: 11px 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.scan-btn:hover { background: var(--sage-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(74,122,64,0.25); }
+.scan-btn:active { transform: translateY(0); }
+
+.search-hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted2);
+  margin-top: 8px;
+}
+
+/* CHIPS */
+.chips-row {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  padding: 12px 20px 0;
+  justify-content: center;
+  animation: fadeDown .6s .15s ease both;
+}
+.chip {
+  background: var(--white);
+  border: 1.5px solid var(--border2);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.chip:hover {
+  background: var(--mint);
+  border-color: var(--sage-dark);
+  color: var(--sage-deep);
+  transform: translateY(-1px);
+}
+
+/* LOADING */
+.loading {
+  display: none;
+  text-align: center;
+  padding: 50px 20px;
+}
+.loading.show { display: block; }
+.leaf-spinner {
+  font-size: 36px;
+  animation: leafSpin 1.4s ease-in-out infinite;
+  display: block;
+  margin-bottom: 12px;
+}
+@keyframes leafSpin {
+  0%,100% { transform: rotate(-15deg) scale(1); }
+  50% { transform: rotate(15deg) scale(1.1); }
+}
+.loading p { font-size: 13px; color: var(--muted); }
+
+/* ERROR */
+.error-card {
+  display: none;
+  margin: 16px 20px;
+  background: var(--blush);
+  border: 1.5px solid var(--grade-e-border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--grade-e-text);
+}
+.error-card.show { display: block; }
+
+/* RESULT */
+.result-wrap {
+  display: none;
+  padding: 18px 20px 0;
+  animation: riseUp .45s cubic-bezier(.22,.68,0,1.2) both;
+}
+.result-wrap.show { display: block; }
+@keyframes riseUp {
+  from { opacity:0; transform: translateY(18px) scale(.98); }
+  to { opacity:1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeDown {
+  from { opacity:0; transform: translateY(-10px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* CARD BASE */
+.card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 16px rgba(100,140,90,0.07);
+}
+
+/* PRODUCT CARD */
+.product-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.product-img-wrap {
+  width: 68px; height: 68px;
+  border-radius: 16px;
+  background: var(--mint);
+  border: 1.5px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  font-size: 28px;
+}
+.product-img-wrap img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+}
+.prod-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 3px;
+  color: var(--text);
+}
+.prod-brand {
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.prod-tags {
+  display: flex; gap: 5px; flex-wrap: wrap;
+}
+.prod-tag {
+  background: var(--mint);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 2px 8px;
+  font-size: 10px;
+  color: var(--text2);
+}
+
+/* GRADE CARD */
+.grade-card {
+  border-radius: 22px;
+  padding: 22px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 16px rgba(100,140,90,0.07);
+  border: 1.5px solid;
+  position: relative;
+  overflow: hidden;
+}
+.grade-card::after {
+  content: attr(data-grade);
+  position: absolute;
+  right: -10px; top: -18px;
+  font-family: 'Playfair Display', serif;
+  font-size: 110px;
+  font-weight: 700;
+  opacity: 0.07;
+  line-height: 1;
+  pointer-events: none;
+}
+.grade-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+.grade-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.grade-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.grade-why {
+  font-size: 13px;
+  line-height: 1.5;
+  opacity: .75;
+}
+.grade-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.grade-dot {
+  width: 28px; height: 8px;
+  border-radius: 100px;
+  opacity: .25;
+  transition: all .3s;
+}
+.grade-dot.lit { opacity: 1; }
+
+/* PROTEIN BANNER */
+.protein-card {
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1.5px solid;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.protein-emoji { font-size: 30px; flex-shrink: 0; }
+.protein-level {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.protein-detail { font-size: 11.5px; opacity: .75; }
+
+/* SECTION LABEL */
+.sec-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 16px 0 8px;
+}
+
+/* KEY NUTRIENTS */
+.nut-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.nut-cell {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 1px 8px rgba(100,140,90,0.05);
+  transition: transform .2s;
+}
+.nut-cell:hover { transform: translateY(-2px); }
+.nut-cell.full { grid-column: 1/-1; }
+.nut-lbl {
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.nut-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.nut-val span { font-size: 13px; font-weight: 400; color: var(--muted); font-family: 'Plus Jakarta Sans',sans-serif; }
+.nut-track {
+  height: 5px;
+  background: var(--cream2);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.nut-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+.nut-ctx { font-size: 10px; color: var(--muted2); }
+
+/* FULL NUTRITION TABLE */
+.table-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 16px rgba(100,140,90,0.07);
+}
+.trow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(180,210,170,0.15);
+  font-size: 13px;
+}
+.trow:last-child { border-bottom: none; }
+.trow.thead {
+  background: var(--mint);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.trow.sub .tname {
+  padding-left: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.tval {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* SCORING */
+.score-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 16px rgba(100,140,90,0.07);
+}
+.srow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 11px;
+}
+.srow:last-child { margin-bottom: 0; }
+.sname {
+  font-size: 12px;
+  color: var(--text2);
+  width: 80px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+.strack {
+  flex: 1;
+  height: 8px;
+  background: var(--cream2);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.sfill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+.sverdict {
+  font-size: 11px;
+  font-weight: 600;
+  width: 60px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ALLERGENS */
+.allergen-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 16px rgba(100,140,90,0.07);
+}
+.allergen-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.achip {
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border: 1.5px solid;
+}
+.achip.yes {
+  background: #fdecea;
+  border-color: #f5b8b0;
+  color: #8a2020;
+}
+.achip.no {
+  background: var(--mint);
+  border-color: var(--border2);
+  color: var(--muted);
+}
+.allergen-note {
+  font-size: 10px;
+  color: var(--muted2);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* EMPTY */
+.empty {
+  text-align: center;
+  padding: 50px 20px 24px;
+  animation: fadeDown .5s ease both;
+}
+.empty-art {
+  font-size: 52px;
+  margin-bottom: 14px;
+  display: block;
+}
+.empty-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.empty-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.empty-tags {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.etag {
+  background: var(--mint);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 24px 20px 0;
+  font-size: 10px;
+  color: var(--muted2);
+  line-height: 1.8;
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="header">
+    <div class="logo-pill">
+      <div class="logo-dot">🌿</div>
+      <span class="logo-text">NutriScan</span>
+    </div>
+    <div class="hero-title">Know what's<br><span>really</span> in your food.</div>
+    <div class="hero-sub">Scan any product · Get your A–F health rating instantly</div>
+  </div>
+
+  <div class="search-section">
+    <div class="search-wrap">
+      <input id="qInput" type="text" placeholder="Search a product or paste a barcode…" autocomplete="off" />
+      <button class="scan-btn" onclick="doSearch()">✦ Scan</button>
+    </div>
+    <div class="search-hint">Try "Maggi noodles", "Oreo", or a barcode like 7622300489335</div>
+  </div>
+
+  <div class="chips-row">
+    <div class="chip" onclick="go('Quaker oats')">🌾 Quaker Oats</div>
+    <div class="chip" onclick="go('Oreo cookies')">🍪 Oreo</div>
+    <div class="chip" onclick="go('Tropicana orange juice')">🍊 Tropicana</div>
+    <div class="chip" onclick="go('Kelloggs corn flakes')">🥣 Kellogg's</div>
+    <div class="chip" onclick="go('Greek yogurt')">🥛 Greek Yogurt</div>
+    <div class="chip" onclick="go('Britannia digestive biscuits')">🌿 Britannia</div>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="leaf-spinner">🌿</span>
+    <p>Scanning nutritional data…</p>
+  </div>
+
+  <div class="error-card" id="errBox"></div>
+
+  <div class="result-wrap" id="results"></div>
+
+  <div id="empty" class="empty">
+    <span class="empty-art">🥗</span>
+    <div class="empty-title">What are you eating today?</div>
+    <div class="empty-sub">Search any packaged food to get your<br>instant health rating, protein level & allergens.</div>
+    <div class="empty-tags">
+      <span class="etag">A–F Rating</span>
+      <span class="etag">Protein Level</span>
+      <span class="etag">Full Nutrition</span>
+      <span class="etag">Allergens</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-logo">NutriScan · by Shreya Chauhan</div>
+    Powered by Open Food Facts · Scores based on per-100g criteria
+  </div>
+
+</div>
+<script>
+const GD = {
+  A: { bg:'var(--grade-a-bg)', text:'var(--grade-a-text)', border:'var(--grade-a-border)', label:'Excellent Choice ✓', dot:'#4caf50' },
+  B: { bg:'var(--grade-b-bg)', text:'var(--grade-b-text)', border:'var(--grade-b-border)', label:'Pretty Good 👍', dot:'#8bc34a' },
+  C: { bg:'var(--grade-c-bg)', text:'var(--grade-c-text)', border:'var(--grade-c-border)', label:'Okay, Not Great', dot:'#ffc107' },
+  D: { bg:'var(--grade-d-bg)', text:'var(--grade-d-text)', border:'var(--grade-d-border)', label:'Not Ideal 😬', dot:'#ff9800' },
+  E: { bg:'var(--grade-e-bg)', text:'var(--grade-e-text)', border:'var(--grade-e-border)', label:'Poor Choice 🚩', dot:'#f44336' },
+  F: { bg:'var(--grade-f-bg)', text:'var(--grade-f-text)', border:'var(--grade-f-border)', label:'Avoid This ⛔', dot:'#d32f2f' },
+};
+
+const ALLERGENS = [
+  { label:'Gluten', icon:'🌾', patterns:['gluten','wheat','barley','rye','oat','spelt'] },
+  { label:'Dairy', icon:'🥛', patterns:['milk','lactose','dairy','butter','cream','whey','casein','cheese'] },
+  { label:'Eggs', icon:'🥚', patterns:['egg','albumin','ovalbumin','lysozyme'] },
+  { label:'Tree Nuts', icon:'🌰', patterns:['almond','cashew','walnut','hazelnut','pistachio','macadamia','pecan','brazil nut'] },
+  { label:'Peanuts', icon:'🥜', patterns:['peanut','groundnut','arachis'] },
+  { label:'Soy', icon:'🫘', patterns:['soy','soya','tofu','edamame'] },
+  { label:'Fish', icon:'🐟', patterns:['fish','cod','salmon','tuna','sardine','anchovy'] },
+  { label:'Shellfish', icon:'🦐', patterns:['shellfish','shrimp','prawn','crab','lobster'] },
+  { label:'Sesame', icon:'🌰', patterns:['sesame','tahini'] },
+  { label:'Mustard', icon:'🌿', patterns:['mustard'] },
+  { label:'Sulphites', icon:'🧪', patterns:['sulphite','sulfite','sulphur dioxide'] },
+  { label:'Celery', icon:'🥬', patterns:['celery','celeriac'] },
+];
+
+function calcGrade(n) {
+  let p = 0, reasons = [];
+  const sugar = n.sugars_100g||0, fat = n.fat_100g||0, satfat = n['saturated-fat_100g']||0;
+  const sodmg = n.sodium_100g ? n.sodium_100g*1000 : (n.salt_100g ? n.salt_100g*400 : 0);
+  const protein = n.proteins_100g||0, fibre = n.fiber_100g||n['fiber_100g']||0;
+
+  if(sugar>=25){p+=70;reasons.push('extreme sugar');}
+  else if(sugar>=20){p+=55;reasons.push('excessive sugar');}
+  else if(sugar>=15){p+=40;reasons.push('very high sugar');}
+  else if(sugar>=10){p+=25;reasons.push('high sugar');}
+  else if(sugar>=5){p+=10;reasons.push('moderate sugar');}
+
+  if(satfat>=10){p+=45;reasons.push('excessive sat. fat');}
+  else if(satfat>=5){p+=30;reasons.push('high sat. fat');}
+  else if(satfat>=3){p+=15;}
+  else if(satfat>=1.5){p+=5;}
+
+  if(fat>=20){p+=38;}
+  else if(fat>=17.5){p+=28;reasons.push('high fat');}
+  else if(fat>=10){p+=18;}
+  else if(fat>=5){p+=8;}
+
+  if(sodmg>=500){p+=55;reasons.push('excessive sodium');}
+  else if(sodmg>=400){p+=42;reasons.push('very high sodium');}
+  else if(sodmg>=300){p+=30;reasons.push('high sodium');}
+  else if(sodmg>=200){p+=18;}
+  else if(sodmg>=120){p+=8;}
+
+  if(protein>20)p-=15; else if(protein>10)p-=8;
+  if(fibre>6)p-=12; else if(fibre>3)p-=6;
+
+  p = Math.max(0,Math.min(100,p));
+  const grade = p<10?'A':p<22?'B':p<38?'C':p<55?'D':p<72?'E':'F';
+  const why = reasons.length ? reasons.slice(0,2).map(r=>r[0].toUpperCase()+r.slice(1)).join(' · ') : (grade<='B'?'Well-balanced nutrition':'Multiple nutritional concerns');
+  return {grade,why};
+}
+
+function proteinLevel(n) {
+  const pr = n.proteins_100g||0;
+  const kcal = n['energy-kcal_100g']||(n.energy_100g ? n.energy_100g/4.184 : 0);
+  const ratio = kcal>0 ? (pr/kcal)*100 : 0;
+  if(ratio>=10) return {level:'High Protein 💪',color:'var(--sage-deep)',bg:'var(--mint)',border:'var(--sage-dark)',detail:`${pr.toFixed(1)}g per 100g · ${ratio.toFixed(1)}g per 100 kcal — meets high protein threshold (≥10g/100kcal)`,emoji:'💪'};
+  if(ratio>=5)  return {level:'Moderate Protein',color:'#7a6010',bg:'var(--lemon)',border:'#c8b060',detail:`${pr.toFixed(1)}g per 100g · ${ratio.toFixed(1)}g per 100 kcal — moderate protein (5–10g/100kcal)`,emoji:'🥚'};
+  return {level:'Low Protein',color:'#8a2810',bg:'var(--blush)',border:'#d09080',detail:`${pr.toFixed(1)}g per 100g · ${ratio.toFixed(1)}g per 100 kcal — low protein (<5g/100kcal)`,emoji:'⚠️'};
+}
+
+function allergens(p) {
+  const hay = [p.allergens||'',p.allergens_tags?(p.allergens_tags.join(' ')):'',(p.traces||''),(p.ingredients_text||'')].join(' ').toLowerCase();
+  return ALLERGENS.map(a => ({...a, present: a.patterns.some(x=>hay.includes(x))}));
+}
+
+function fmt(v,u='g',d=1){ if(v==null||v===''||isNaN(parseFloat(v)))return'—'; return parseFloat(v).toFixed(d)+u; }
+function bw(v,max){ return Math.min(100,(parseFloat(v)||0)/max*100); }
+function bc(v,t){ if(v<=t[0])return'#4caf50'; if(v<=t[1])return'#ffc107'; if(v<=t[2])return'#ff9800'; return'#f44336'; }
+
+function render(prod) {
+  const n = prod.nutriments||{};
+  const {grade,why} = calcGrade(n);
+  const g = GD[grade];
+  const pro = proteinLevel(n);
+  const algs = allergens(prod);
+  const present = algs.filter(a=>a.present);
+  const absent = algs.filter(a=>!a.present);
+
+  const kcal = n['energy-kcal_100g']||(n.energy_100g ? n.energy_100g/4.184 : null);
+  const kcalkj = n.energy_100g||null;
+  const sugar=n.sugars_100g||0, fat=n.fat_100g||0, satfat=n['saturated-fat_100g']||0;
+  const sodmg=n.sodium_100g?n.sodium_100g*1000:(n.salt_100g?n.salt_100g*400:0);
+  const protein=n.proteins_100g||0, fibre=n.fiber_100g||n['fiber_100g']||0;
+
+  const gradeOrder=['A','B','C','D','E','F'];
+  const gi = gradeOrder.indexOf(grade);
+
+  const imgHtml = prod.image_front_small_url
+    ? `<img src="${prod.image_front_small_url}" alt="" onerror="this.parentElement.innerHTML='🥗'" style="width:100%;height:100%;object-fit:contain;border-radius:14px">`
+    : '🥗';
+
+  const nutRows = [
+    {n:'Energy', v: kcal ? fmt(kcal,' kcal',0)+(kcalkj?` / ${fmt(kcalkj,' kJ',0)}`:'') : '—', sub:false},
+    {n:'Total Fat', v:fmt(fat,'g'), sub:false},
+    {n:'↳ Saturated Fat', v:fmt(satfat,'g'), sub:true},
+    {n:'↳ Trans Fat', v:fmt(n['trans-fat_100g'],'g'), sub:true},
+    {n:'Carbohydrates', v:fmt(n.carbohydrates_100g,'g'), sub:false},
+    {n:'↳ Sugars', v:fmt(sugar,'g'), sub:true},
+    {n:'Dietary Fibre', v:fmt(fibre,'g'), sub:false},
+    {n:'Protein', v:fmt(protein,'g'), sub:false},
+    {n:'Salt', v:fmt(n.salt_100g,'g'), sub:false},
+    {n:'Sodium', v:sodmg?fmt(sodmg,' mg',0):'—', sub:true},
+    {n:'Cholesterol', v:fmt(n.cholesterol_100g,' mg',0), sub:false},
+    {n:'Calcium', v:fmt(n.calcium_100g,' mg',0), sub:false},
+    {n:'Iron', v:fmt(n.iron_100g,' mg',2), sub:false},
+    {n:'Vitamin C', v:fmt(n['vitamin-c_100g'],' mg',1), sub:false},
+    {n:'Vitamin A', v:fmt(n['vitamin-a_100g'],' µg',0), sub:false},
+  ].filter(r=>r.v!=='—'&&!r.v.startsWith('NaN')&&!r.v.startsWith('undefined'));
+
+  const scoreItems = [
+    {name:'Sugar', val:sugar, max:30, t:[5,10,20], invert:false},
+    {name:'Total Fat', val:fat, max:30, t:[3,10,17.5], invert:false},
+    {name:'Sat. Fat', val:satfat, max:15, t:[1.5,3,5], invert:false},
+    {name:'Sodium', val:sodmg/10, max:60, t:[12,30,50], invert:false},
+    {name:'Protein', val:protein, max:30, t:[5,10,20], invert:true},
+    {name:'Fibre', val:fibre, max:10, t:[2,4,6], invert:true},
+  ];
+
+  document.getElementById('results').innerHTML = `
+    <!-- product -->
+    <div class="card">
+      <div class="product-card">
+        <div class="product-img-wrap">${imgHtml}</div>
+        <div style="flex:1;min-width:0">
+          <div class="prod-name">${prod.product_name||'Unknown Product'}</div>
+          <div class="prod-brand">${prod.brands||'Brand unknown'}</div>
+          <div class="prod-tags">
+            ${prod.quantity?`<span class="prod-tag">${prod.quantity}</span>`:''}
+            ${prod.serving_size?`<span class="prod-tag">Serving: ${prod.serving_size}</span>`:''}
+            ${prod.categories?`<span class="prod-tag">${prod.categories.split(',')[0].trim()}</span>`:''}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- grade -->
+    <div class="grade-card" data-grade="${grade}" style="background:${g.bg};border-color:${g.border};color:${g.text}">
+      <div class="grade-top">
+        <div class="grade-letter">${grade}</div>
+        <div>
+          <div class="grade-label">${g.label}</div>
+          <div class="grade-why">${why}</div>
+        </div>
+      </div>
+      <div class="grade-dots">
+        ${gradeOrder.map((gl,i)=>`<div class="grade-dot ${i<=gi?'lit':''}" style="background:${GD[gl].dot}"></div>`).join('')}
+        <span style="font-size:11px;margin-left:6px;opacity:.6">NutriScan Score</span>
+      </div>
+    </div>
+
+    <!-- protein -->
+    <div class="protein-card" style="background:${pro.bg};border-color:${pro.border};color:${pro.color}">
+      <div class="protein-emoji">${pro.emoji}</div>
+      <div>
+        <div class="protein-level">${pro.level}</div>
+        <div class="protein-detail">${pro.detail}</div>
+      </div>
+    </div>
+
+    <!-- key nutrients -->
+    <div class="sec-label">Key Nutrients · per 100g</div>
+    <div class="nut-grid">
+      ${kcal?`
+      <div class="nut-cell full">
+        <div class="nut-lbl">Calories</div>
+        <div class="nut-val">${Math.round(kcal)}<span> kcal</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(kcal,600)}%;background:${bc(kcal,[150,300,450])}"></div></div>
+        <div class="nut-ctx">Daily ref: ~2000 kcal</div>
+      </div>`:''}
+      <div class="nut-cell">
+        <div class="nut-lbl">Protein</div>
+        <div class="nut-val">${protein.toFixed(1)}<span>g</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(protein,40)}%;background:#4caf50"></div></div>
+        <div class="nut-ctx">Higher is better ↑</div>
+      </div>
+      <div class="nut-cell">
+        <div class="nut-lbl">Total Fat</div>
+        <div class="nut-val">${fat.toFixed(1)}<span>g</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(fat,40)}%;background:${bc(fat,[5,17.5,20])}"></div></div>
+        <div class="nut-ctx">Ref: &lt;17.5g</div>
+      </div>
+      <div class="nut-cell">
+        <div class="nut-lbl">Sugars</div>
+        <div class="nut-val">${sugar.toFixed(1)}<span>g</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(sugar,50)}%;background:${bc(sugar,[5,10,20])}"></div></div>
+        <div class="nut-ctx">Ideal: &lt;5g</div>
+      </div>
+      <div class="nut-cell">
+        <div class="nut-lbl">Fibre</div>
+        <div class="nut-val">${fibre.toFixed(1)}<span>g</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(fibre,15)}%;background:${fibre>6?'#4caf50':fibre>3?'#ffc107':'#aaa'}"></div></div>
+        <div class="nut-ctx">Higher is better ↑</div>
+      </div>
+      <div class="nut-cell">
+        <div class="nut-lbl">Sat. Fat</div>
+        <div class="nut-val">${satfat.toFixed(1)}<span>g</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(satfat,20)}%;background:${bc(satfat,[1.5,3,5])}"></div></div>
+        <div class="nut-ctx">Ideal: &lt;1.5g</div>
+      </div>
+      <div class="nut-cell">
+        <div class="nut-lbl">Sodium</div>
+        <div class="nut-val">${Math.round(sodmg)}<span>mg</span></div>
+        <div class="nut-track"><div class="nut-fill" style="width:${bw(sodmg,800)}%;background:${bc(sodmg,[120,300,400])}"></div></div>
+        <div class="nut-ctx">Ideal: &lt;120mg</div>
+      </div>
+    </div>
+
+    <!-- full table -->
+    <div class="sec-label">Full Nutrition Label · per 100g</div>
+    <div class="table-card">
+      <div class="trow thead"><span>Nutrient</span><span>Per 100g</span></div>
+      ${nutRows.map(r=>`<div class="trow ${r.sub?'sub':''}"><span class="tname">${r.n}</span><span class="tval">${r.v}</span></div>`).join('')}
+    </div>
+
+    <!-- scoring -->
+    <div class="sec-label">Scoring Breakdown</div>
+    <div class="score-card">
+      ${scoreItems.map(it=>{
+        const pct=Math.min(100,(it.val/it.max)*100);
+        const col=it.invert
+          ?(it.val>=it.t[2]?'#4caf50':it.val>=it.t[1]?'#8bc34a':it.val>=it.t[0]?'#ffc107':'#f44336')
+          :bc(it.val,it.t);
+        const vd=it.invert
+          ?(it.val>=it.t[2]?'Excellent':it.val>=it.t[1]?'Good':it.val>=it.t[0]?'Fair':'Low')
+          :(it.val<=it.t[0]?'Great':it.val<=it.t[1]?'OK':it.val<=it.t[2]?'High':'Very High');
+        return`<div class="srow">
+          <span class="sname">${it.name}</span>
+          <div class="strack"><div class="sfill" style="width:${pct}%;background:${col}"></div></div>
+          <span class="sverdict" style="color:${col}">${vd}</span>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- allergens -->
+    <div class="sec-label">Allergen Information</div>
+    <div class="allergen-card">
+      ${present.length>0
+        ?`<div style="font-size:12px;color:#8a2020;font-weight:600;margin-bottom:4px;">⚠️ Contains or may contain</div>
+          <div class="allergen-chips">${present.map(a=>`<span class="achip yes">${a.icon} ${a.label}</span>`).join('')}</div>`
+        :`<div style="font-size:13px;color:var(--sage-deep)">✅ No major allergens detected in available data</div>`}
+      ${absent.length>0?`
+        <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 4px">Not detected</div>
+        <div class="allergen-chips">${absent.map(a=>`<span class="achip no">${a.icon} ${a.label}</span>`).join('')}</div>`:''}
+      <div class="allergen-note">Based on ingredient text analysis. Always check the physical product label for complete and verified allergen information.</div>
+    </div>
+  `;
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('empty').style.display='none';
+
+  setTimeout(()=>{
+    document.querySelectorAll('.nut-fill,.sfill').forEach(el=>{
+      const w=el.style.width; el.style.width='0';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.width=w;}));
+    });
+  },60);
+}
+
+async function doSearch() {
+  const q = document.getElementById('qInput').value.trim();
+  if (!q) return;
+
+  document.getElementById('loading').classList.add('show');
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('errBox').classList.remove('show');
+  document.getElementById('empty').style.display='none';
+
+  try {
+    let prod = null;
+    if (/^\d{8,14}$/.test(q)) {
+      const r = await fetch(`https://world.openfoodfacts.org/api/v0/product/${q}.json`);
+      const d = await r.json();
+      if (d.status===1 && d.product?.product_name) prod=d.product;
+    }
+    if (!prod) {
+      const r = await fetch(`https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=10`);
+      const d = await r.json();
+      const ps = (d.products||[]).filter(p=>p.product_name&&p.nutriments&&(p.nutriments['energy-kcal_100g']||p.nutriments.energy_100g));
+      if (ps.length) prod=ps[0];
+    }
+    if (!prod) throw new Error('No product found with nutritional data — try a different name!');
+    document.getElementById('loading').classList.remove('show');
+    render(prod);
+  } catch(e) {
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('errBox').textContent='😅 '+e.message;
+    document.getElementById('errBox').classList.add('show');
+    document.getElementById('empty').style.display='block';
+  }
+}
+
+function go(t){ document.getElementById('qInput').value=t; doSearch(); }
+document.getElementById('qInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doSearch(); });
+</script>
+</body>
+</html>
